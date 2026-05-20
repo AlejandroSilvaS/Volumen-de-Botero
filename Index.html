@@ -440,15 +440,9 @@
       object-fit: cover;
       display: block;
     }
-
     .obra-img-frame::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        repeating-linear-gradient(0deg, transparent, transparent calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4)),
-        repeating-linear-gradient(90deg, transparent, transparent calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4));
-      pointer-events: none;
+      content: none;
+      display: none;
     }
 
     .obra-info-box {
@@ -906,7 +900,12 @@
 
     <div class="obra-scroll">
       <div class="obra-img-frame">
-        <img id="obraImg" src="Mona-Lisa-age-Twelve-1-scaled.jpg" alt="Obra identificada">
+        <img
+          id="obraImg"
+          src="monalisa_botero.jpg"
+          alt="Obra identificada"
+          data-fallbacks='["monalisa_botero.png","monalisa_botero.jpeg","mona-lisa-age-twelve-1-scaled.jpg","monalisa_botero.jpg"]'
+        >
       </div>
 
       <p class="obra-hints" id="obraHints">
@@ -949,7 +948,11 @@
     <div class="detail-screen-content">
       <div class="compare-grid">
         <div class="detail-card">
-          <img src="Mona-Lisa-age-Twelve-1-scaled.jpg" alt="Monalisa de Botero">
+          <img
+            src="monalisa_botero.jpg"
+            alt="Monalisa de Botero"
+            data-fallbacks='["monalisa_botero.png","monalisa_botero.jpeg","mona-lisa-age-twelve-1-scaled.jpg","monalisa_botero.jpg"]'
+          >
           <div class="detail-caption">Monalisa<br>Botero, 1978</div>
         </div>
 
@@ -988,8 +991,11 @@
     <div class="detail-screen-content">
       <div class="instrument-grid">
         <div class="detail-card">
-          <img src="instrumentos_musicos.jpg" alt="Instrumentos de Los músicos"
-               onerror="this.outerHTML='<div class=&quot;placeholder-img&quot;>Añade la imagen:<br>instrumentos_musicos.jpg</div>'">
+          <img
+            src="instrumentos.png"
+            alt="Instrumentos de Los músicos"
+            data-fallbacks='["Instrumentos.png","instrumentos.jpg","Instrumentos.jpg","instrumentos.png","instrumentos_musicos.png"]'
+          >
           <div class="detail-caption">Zoom de instrumentos</div>
         </div>
       </div>
@@ -1032,7 +1038,7 @@
         Están bailando música tropical, posiblemente un porro sabanero. Escucha un fragmento...
       </div>
 
-      <audio id="danceAudio" src="cancion.mp3"></audio>
+      <audio id="danceAudio" src="cancion.mp3" preload="auto"></audio>
 
       <div class="action-row">
         <button class="mic-btn" onclick="playDanceAudio()" aria-label="Escuchar fragmento">▶️</button>
@@ -1101,11 +1107,11 @@
     - Bailando en colombia.jpg
     - La familia.jpg
     - Los musicos.jpg
-    - Mona-Lisa-age-Twelve-1-scaled.jpg
+    - monalisa_botero.jpg
 
     IMÁGENES OPCIONALES PARA AÑADIR LUEGO:
     - monalisa_davinci.jpg       -> imagen de Da Vinci para la pantalla comparativa
-    - instrumentos_musicos.jpg   -> imagen/zoom de instrumentos para la pantalla de Los músicos
+    - instrumentos.png   -> imagen/zoom de instrumentos para la pantalla de Los músicos
     - Musica.png                  -> imagen para la pantalla de música de Bailando en Colombia
     - cancion.mp3  -> audio que entra después de que el bot responde sobre la música
     - perro_la_familia.jpg       -> imagen/zoom del perro de La familia
@@ -1117,7 +1123,8 @@
       id: "monalisa",
       title: "Monalisa",
       year: "1978",
-      img: "Mona-Lisa-age-Twelve-1-scaled.jpg",
+      img: "monalisa_botero.jpg",
+      fallbacks: ["monalisa_botero.png","monalisa_botero.jpeg","mona-lisa-age-twelve-1-scaled.jpg","monalisa_botero.jpg"],
       keywords: ["monalisa", "mona lisa", "gioconda"],
       info: "Una reinterpretación madura y monumental del clásico de Da Vinci. Aquí, la figura es imponente, ocupa casi todo el espacio y de fondo se aprecian sutiles montañas que evocan el paisaje andino colombiano, uniendo el arte universal con el local.",
       author: "El autor es Fernando Botero, artista colombiano reconocido por sus figuras voluminosas, su sentido crítico y su estilo visual inconfundible.",
@@ -1130,6 +1137,7 @@
       title: "Los músicos",
       year: "1979",
       img: "Los musicos.jpg",
+      fallbacks: ["Los musicos.jpg","Los Musicos.jpg","los musicos.jpg","Los músicos.jpg","Los músicos.png"],
       keywords: ["los musicos", "músicos", "musicos", "instrumentos", "guitarra", "clarinete", "mandolina"],
       info: "Los músicos es una de las obras más rítmicas y coloridas de Botero. Muestra a un grupo de artistas locales apretados en el lienzo con sus instrumentos, como guitarra, clarinete y mandolina. Visualmente es una joya para la app porque permite hacer acercamientos interactivos a cada instrumento mientras se escucha su sonido real.",
       author: "El autor es Fernando Botero. En esta obra, usa el volumen y la composición cerrada para crear una escena musical llena de ritmo, color y presencia.",
@@ -1269,8 +1277,10 @@
       card.id = `card-${index}`;
       card.onclick = () => handleCardClick(index);
 
+      const fallbacks = art.fallbacks ? `data-fallbacks='${JSON.stringify(art.fallbacks)}'` : "";
+
       card.innerHTML = `
-        <img src="${art.img}" alt="${art.title}">
+        <img src="${art.img}" alt="${art.title}" ${fallbacks}>
         <div class="card-info">
           <p class="card-title">${art.title}</p>
           <p class="card-year">${art.year}</p>
@@ -1429,8 +1439,18 @@
     currentArtwork = artworks[index];
 
     document.getElementById("obraSubtitle").textContent = currentArtwork.title;
-    document.getElementById("obraImg").src = currentArtwork.img;
-    document.getElementById("obraImg").alt = currentArtwork.title;
+
+    const obraImage = document.getElementById("obraImg");
+    obraImage.src = currentArtwork.img;
+    obraImage.alt = currentArtwork.title;
+
+    if (currentArtwork.fallbacks) {
+      obraImage.dataset.fallbacks = JSON.stringify(currentArtwork.fallbacks);
+      obraImage.dataset.fallbackIndex = "0";
+    } else {
+      delete obraImage.dataset.fallbacks;
+      delete obraImage.dataset.fallbackIndex;
+    }
     document.getElementById("obraInfoBox").textContent =
       `Obra identificada: ${currentArtwork.title}. Puedes preguntarme por la historia, el autor o detalles de la obra.`;
 
@@ -1805,8 +1825,41 @@
 
   window.addEventListener("beforeunload", () => stopDanceAudio());
 
+
+  function setupImageFallbacks() {
+    document.addEventListener(
+      "error",
+      function(event) {
+        const img = event.target;
+        if (!img || img.tagName !== "IMG") return;
+
+        const rawFallbacks = img.dataset.fallbacks;
+        if (!rawFallbacks) return;
+
+        let fallbacks = [];
+        try {
+          fallbacks = JSON.parse(rawFallbacks);
+        } catch (e) {
+          fallbacks = rawFallbacks.split(",").map(item => item.trim()).filter(Boolean);
+        }
+
+        let index = Number(img.dataset.fallbackIndex || 0);
+
+        if (index < fallbacks.length) {
+          img.dataset.fallbackIndex = String(index + 1);
+          img.src = fallbacks[index];
+          return;
+        }
+
+        img.outerHTML = `<div class="placeholder-img">No se encontró la imagen.<br>Revisa el nombre exacto del archivo.</div>`;
+      },
+      true
+    );
+  }
+
   window.addEventListener("resize", () => updateSlider(false));
 
+  setupImageFallbacks();
   renderSlider();
   requestAnimationFrame(() => updateSlider(false));
 </script>
