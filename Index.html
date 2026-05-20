@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>El Volumen de Botero</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FFE6A7;
+      --brown-deep: #2A1A0E;
+      --brown-btn: #2C1C0C;
+      --brown-mid: #5C3D1E;
+      --gold: #C9A84C;
+      --panel: rgba(255, 230, 167, 0.92);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(201,168,76,0.16), transparent 46%),
+        linear-gradient(180deg, #FFE6A7 0%, #F8D985 100%);
+      font-family: 'EB Garamond', serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: block;
+    }
+
+    #app {
+      width: 100vw;
+      height: 100dvh;
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, rgba(201,168,76,0.20), transparent 48%),
+        linear-gradient(180deg, #FFE6A7 0%, #F8D985 100%);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      background:
+        radial-gradient(circle at top, rgba(201,168,76,0.20), transparent 48%),
+        linear-gradient(180deg, #FFE6A7 0%, #F8D985 100%);
+      overflow: hidden;
+    }
+
+    .screen.active { display: flex; }
+
+    .grid-bg {
+      background:
+        radial-gradient(circle at top, rgba(201,168,76,0.20), transparent 48%),
+        linear-gradient(180deg, #FFE6A7 0%, #F8D985 100%);
+    }
+
+    .bg-image-screen {
+      background-image:
+        linear-gradient(rgba(255, 230, 167, 0.38), rgba(255, 230, 167, 0.40)),
+        url("Pantalla_Inicial-iPhone 16 - 2.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 314px;
+      padding: 18px 22px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--brown-btn);
+      color: var(--cream);
+      transition: transform 0.13s, opacity 0.13s;
+    }
+
+    .btn:active { transform: scale(0.96); opacity: 0.88; }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--brown-btn);
+      color: var(--brown-btn);
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* HOME */
+
+    #screen-home {
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .home-card {
+      margin-top: auto;
+      margin-bottom: 28px;
+      width: 100%;
+      background: rgba(255, 230, 167, 0.78);
+      padding: 24px 18px;
+      border-radius: 28px;
+      border: 1px solid rgba(42, 26, 14, 0.08);
+      backdrop-filter: blur(2px);
+    }
+
+    .home-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.55rem, 5vw, 2.25rem);
+      font-weight: 600;
+      color: var(--brown-deep);
+      line-height: 1.1;
+      margin-bottom: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-variant: small-caps;
+    }
+
+    .home-subtitle {
+      font-size: 1.02rem;
+      color: var(--brown-mid);
+      line-height: 1.35;
+      margin-bottom: 26px;
+    }
+
+    .home-buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    /* QR */
+
+    #screen-qr {
+      justify-content: space-between;
+      padding: 44px 40px 52px;
+    }
+
+    .qr-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-variant: small-caps;
+      margin-top: 6px;
+    }
+
+    .qr-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .qr-frame {
+      width: min(210px, 58vw);
+      height: min(210px, 58vw);
+      position: relative;
+      background: rgba(255,230,167,0.2);
+      border-radius: 24px;
+    }
+
+    .qr-frame svg { width: 100%; height: 100%; }
+
+    .scan-line {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      height: 3px;
+      background: var(--brown-btn);
+      top: 18px;
+      border-radius: 10px;
+      animation: scan 2s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 18px; opacity: 1; }
+      48% { top: calc(100% - 18px); opacity: 1; }
+      50% { opacity: 0; }
+      52% { top: 18px; opacity: 0; }
+      54% { opacity: 1; }
+      100% { top: 18px; opacity: 1; }
+    }
+
+    .qr-footer {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    /* TOP */
+
+    .topbar {
+      width: min(100%, 980px);
+      padding: clamp(24px, 4vh, 48px) clamp(20px, 5vw, 56px) 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin: 0 auto;
+    }
+
+    .sala-label {
+      font-size: 0.95rem;
+      color: var(--brown-mid);
+      letter-spacing: 0.05em;
+    }
+
+    .museo-title, .obra-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      text-align: center;
+      padding: 10px 24px 4px;
+      width: 100%;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-variant: small-caps;
+    }
+
+    .obra-heading {
+      font-size: 1.42rem;
+      padding-top: 8px;
+    }
+
+    .obra-subtitle {
+      font-size: 1.02rem;
+      color: var(--brown-mid);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    /* MUSEO */
+
+    .slider-outer {
+      width: 100%;
+      flex: 1;
+      min-height: 270px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding-inline: max(0px, calc((100vw - 980px) / 2));
+    }
+
+    .slider-track {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: max-content;
+      padding: clamp(12px, 2vh, 24px) 0;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .slide-card {
+      flex-shrink: 0;
+      width: clamp(220px, 28vw, 340px);
+      height: clamp(300px, 52vh, 500px);
+      margin: 0 14px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #d4c09a;
+      position: relative;
+      transition: transform 0.38s, box-shadow 0.38s;
+      cursor: pointer;
+    }
+
+    .slide-card.active-card {
+      transform: scale(1.07);
+      box-shadow: 0 14px 42px rgba(42, 26, 14, 0.28);
+    }
+
+    .slide-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .card-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 48px 16px 14px;
+      background: linear-gradient(transparent, rgba(42, 26, 14, 0.78));
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.2;
+    }
+
+    .card-year {
+      font-size: 0.86rem;
+      color: rgba(255, 230, 167, 0.78);
+      margin-top: 2px;
+    }
+
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 0 8px;
+      flex-shrink: 0;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(42, 26, 14, 0.2);
+      transition: background 0.25s, transform 0.25s;
+    }
+
+    .dot.active {
+      background: var(--brown-btn);
+      transform: scale(1.35);
+    }
+
+    .voice-section {
+      width: 100%;
+      padding: 2px 32px 0;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .voice-question {
+      font-size: 1.05rem;
+      color: var(--brown-mid);
+      line-height: 1.5;
+    }
+
+    .voice-hint {
+      margin-top: 5px;
+      font-size: 0.92rem;
+      color: var(--brown-deep);
+      opacity: 0.7;
+      line-height: 1.4;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      margin: 14px auto 24px;
+      flex-shrink: 0;
+    }
+
+    .mic-btn, .chat-btn {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: var(--brown-btn);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.13s;
+      color: var(--cream);
+      font-size: 1.4rem;
+      box-shadow: 0 5px 14px rgba(42,26,14,0.25);
+    }
+
+    .mic-btn:active, .chat-btn:active { transform: scale(0.92); }
+
+    .mic-btn.listening, .small-mic-btn.listening { animation: pulse-mic 1.2s ease-in-out infinite; }
+
+    @keyframes pulse-mic {
+      0% { box-shadow: 0 0 0 0 rgba(44,28,12,0.5); }
+      70% { box-shadow: 0 0 0 18px rgba(44,28,12,0); }
+      100% { box-shadow: 0 0 0 0 rgba(44,28,12,0); }
+    }
+
+    /* OBRA */
+
+    .obra-scroll {
+      width: 100%;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 12px;
+    }
+
+    .obra-img-frame {
+      width: min(76vw, 420px);
+      height: clamp(300px, 48vh, 560px);
+      max-height: 56vh;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      border: 3px solid var(--gold);
+      flex-shrink: 0;
+      background: #d4c09a;
+    }
+
+    .obra-img-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .obra-img-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4)),
+        repeating-linear-gradient(90deg, transparent, transparent calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4 - 1px), rgba(201,168,76,0.35) calc(100%/4));
+      pointer-events: none;
+    }
+
+    .obra-info-box {
+      width: calc(100% - 54px);
+      margin-top: 12px;
+      background: rgba(255,255,255,0.34);
+      border: 1px solid rgba(44,28,12,0.12);
+      border-radius: 18px;
+      padding: 14px 16px;
+      max-height: 135px;
+      overflow-y: auto;
+      color: var(--brown-deep);
+      font-size: 0.98rem;
+      line-height: 1.38;
+      text-align: center;
+    }
+
+    .botero-guide {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 26px 0;
+    }
+
+    .guide-figure {
+      width: 96px;
+      height: 126px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .guide-placeholder {
+      width: 96px;
+      height: 126px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      text-align: center;
+      color: rgba(42,26,14,0.55);
+    }
+
+    .guide-mic-large {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 4px solid rgba(42,26,14,0.75);
+      background: rgba(255,230,167,0.36);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brown-btn);
+      font-size: 2rem;
+      margin-left: auto;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .obra-hints {
+      font-size: 0.92rem;
+      color: var(--brown-mid);
+      text-align: center;
+      line-height: 1.45;
+      padding: 12px 34px 0;
+    }
+
+    .obra-hints strong {
+      font-weight: 500;
+      color: var(--brown-deep);
+      font-style: italic;
+    }
+
+    /* PANTALLAS SEPARADAS: COMPARACIÓN / INSTRUMENTOS */
+
+    .detail-screen-content {
+      width: min(100%, 980px);
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px clamp(20px, 5vw, 56px) 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto;
+    }
+
+    .compare-grid, .instrument-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .detail-card {
+      background: rgba(255,255,255,0.28);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(201,168,76,0.95);
+      min-height: 240px;
+    }
+
+    .detail-card img {
+      width: 100%;
+      height: clamp(240px, 42vh, 520px);
+      display: block;
+      object-fit: cover;
+      background: rgba(92, 61, 30, 0.15);
+    }
+
+    .detail-caption {
+      padding: 8px 8px 10px;
+      text-align: center;
+      color: var(--brown-deep);
+      font-size: 0.9rem;
+      line-height: 1.1;
+    }
+
+    .placeholder-img {
+      width: 100%;
+      height: clamp(240px, 42vh, 520px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+      background: rgba(44,28,12,0.12);
+      color: rgba(42,26,14,0.64);
+      font-size: 0.86rem;
+      line-height: 1.25;
+    }
+
+    .detail-text {
+      width: 100%;
+      margin-top: 14px;
+      background: rgba(255,255,255,0.34);
+      border: 1px solid rgba(44,28,12,0.12);
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: var(--brown-deep);
+      font-size: 0.98rem;
+      line-height: 1.38;
+      text-align: center;
+    }
+
+    .instrument-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .instrument-grid .detail-card img,
+    .instrument-grid .placeholder-img {
+      height: clamp(260px, 42vh, 440px);
+    }
+
+    .music-grid, .dog-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .music-grid .detail-card img,
+    .music-grid .placeholder-img,
+    .dog-grid .detail-card img,
+    .dog-grid .placeholder-img {
+      height: clamp(260px, 42vh, 440px);
+    }
+
+    /* CHAT */
+
+    .chat-panel {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      background: rgba(42,26,14,0.16);
+      align-items: flex-end;
+    }
+
+    .chat-panel.open { display: flex; }
+
+    .chat-inner {
+      width: 100%;
+      background: var(--cream);
+      border-radius: 24px 24px 0 0;
+      min-height: min(390px, 58dvh);
+      max-height: 68dvh;
+      padding: 20px;
+      position: relative;
+      box-shadow: 0 -10px 35px rgba(42,26,14,0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: var(--brown-mid);
+      padding: 4px 8px;
+    }
+
+    .chat-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--brown-deep);
+      padding: 8px 4px 12px;
+    }
+
+    .message {
+      margin: 8px 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+    }
+
+    .message.user { background: rgba(44,28,12,0.10); }
+    .message.bot { background: rgba(201,168,76,0.22); }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-top: 1px solid rgba(44,28,12,0.12);
+      padding-top: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: 1px solid rgba(44,28,12,0.22);
+      background: rgba(255,255,255,0.45);
+      border-radius: 999px;
+      padding: 12px 14px;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--brown-deep);
+      outline: none;
+      min-width: 0;
+    }
+
+    .send-btn, .small-mic-btn {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--brown-btn);
+      color: var(--cream);
+      cursor: pointer;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #toast {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--brown-btn);
+      color: var(--cream);
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      border-radius: 40px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 200;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+
+
+    @media (max-width: 699px) {
+      .slide-card {
+        width: clamp(210px, 64vw, 260px);
+        height: clamp(285px, 40vh, 360px);
+      }
+
+      .slider-outer {
+        padding-inline: 0;
+      }
+
+      .obra-img-frame {
+        width: min(76vw, 330px);
+        height: clamp(280px, 40vh, 420px);
+        max-height: 42vh;
+      }
+    }
+
+    @media (min-width: 700px) {
+      .compare-grid {
+        grid-template-columns: 1fr 1fr;
+        max-width: 820px;
+      }
+
+      .instrument-grid,
+      .music-grid,
+      .dog-grid {
+        max-width: 680px;
+      }
+
+      .detail-text {
+        max-width: 680px;
+      }
+
+      .obra-info-box {
+        max-width: 640px;
+      }
+
+      .slider-outer {
+        min-height: 420px;
+      }
+
+      .museo-title, .obra-heading {
+        font-size: clamp(1.55rem, 2.1vw, 2.25rem);
+      }
+
+      .voice-section {
+        max-width: 640px;
+      }
+    }
+
+    @media (max-height: 735px) {
+      .topbar { padding-top: 26px; }
+      .slide-card { height: 250px; }
+      .slider-outer { min-height: 220px; }
+      .obra-img-frame { height: 230px; }
+      .obra-info-box { max-height: 100px; font-size: 0.92rem; }
+      .guide-figure, .guide-placeholder { height: 90px; }
+      .guide-mic-large { width: 60px; height: 60px; font-size: 1.65rem; }
+      .detail-card img, .placeholder-img { height: 165px; }
+      .detail-card { min-height: 200px; }
+      .instrument-grid .detail-card img,
+      .instrument-grid .placeholder-img { height: 190px; }
+      .chat-inner { min-height: 340px; }
+    }
+  </style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- HOME CON IMAGEN DE FONDO -->
+  <section id="screen-home" class="screen active bg-image-screen">
+    <div class="home-card">
+      <h1 class="home-title">El Volumen de<br>Botero</h1>
+      <p class="home-subtitle">
+        Hola. Soy El Volumen de Botero.<br>
+        Ponte los auriculares y conéctate con el arte.
+      </p>
+
+      <div class="home-buttons">
+        <button class="btn" onclick="startExperience()">Iniciar el recorrido</button>
+        <button class="btn" onclick="goTo('screen-qr')">Escanear QR</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QR CON LA MISMA IMAGEN DE FONDO -->
+  <section id="screen-qr" class="screen bg-image-screen">
+    <p class="qr-title">El Volumen de<br>Botero</p>
+
+    <div class="qr-area">
+      <div class="qr-frame">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 52L16 16L52 16" stroke="#2C1C0C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M148 16L184 16L184 52" stroke="#2C1C0C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 148L16 184L52 184" stroke="#2C1C0C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M148 184L184 184L184 148" stroke="#2C1C0C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="42" y="42" width="38" height="38" rx="5" stroke="#2C1C0C" stroke-width="6"/>
+          <rect x="120" y="42" width="38" height="38" rx="5" stroke="#2C1C0C" stroke-width="6"/>
+          <rect x="42" y="120" width="38" height="38" rx="5" stroke="#2C1C0C" stroke-width="6"/>
+          <rect x="118" y="118" width="14" height="14" fill="#2C1C0C"/>
+          <rect x="142" y="118" width="14" height="14" fill="#2C1C0C"/>
+          <rect x="118" y="142" width="14" height="14" fill="#2C1C0C"/>
+          <rect x="142" y="150" width="10" height="10" fill="#2C1C0C"/>
+        </svg>
+        <div class="scan-line"></div>
+      </div>
+    </div>
+
+    <div class="qr-footer">
+      <button class="btn" onclick="goTo('screen-museo')">Iniciar el recorrido</button>
+      <button class="btn btn-outline" onclick="goTo('screen-home')">Volver</button>
+    </div>
+  </section>
+
+  <!-- MUSEO -->
+  <section id="screen-museo" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-home')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="museo-title">Museo de Botero</p>
+
+    <div class="slider-outer" id="sliderOuter" onmousedown="sliderDragStart(event)" ontouchstart="sliderTouchStart(event)">
+      <div class="slider-track" id="sliderTrack"></div>
+    </div>
+
+    <div class="slider-dots" id="sliderDots"></div>
+
+    <div class="voice-section">
+      <p class="voice-question">¿Qué obra tienes frente a ti? o<br>¿cuál obra te gustaría indagar?</p>
+      <p class="voice-hint">Puedes hablar o escribir: “Monalisa”, “Los músicos”, “La familia” o “Bailando en Colombia”.</p>
+    </div>
+
+    <div class="action-row">
+      <button class="mic-btn" id="micBtnMuseo" onclick="openChatPanel('museo', true)" aria-label="Activar voz">🎙️</button>
+      <button class="chat-btn" onclick="openChatPanel('museo', false)" aria-label="Abrir chat">💬</button>
+    </div>
+  </section>
+
+  <!-- OBRA IDENTIFICADA -->
+  <section id="screen-obra" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-museo')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="obra-heading">Obra Identificada</p>
+    <p class="obra-subtitle" id="obraSubtitle">Monalisa</p>
+
+    <div class="obra-scroll">
+      <div class="obra-img-frame">
+        <img id="obraImg" src="Mona-Lisa-age-Twelve-1-scaled.jpg" alt="Obra identificada">
+      </div>
+
+      <p class="obra-hints" id="obraHints">
+        Prueba diciendo o escribiendo<br>
+        <strong>“Háblame de la obra”</strong><br>
+        <strong>“¿Quién es el autor?”</strong>
+      </p>
+
+      <div class="botero-guide">
+        <img class="guide-figure" id="guideFigure" src="botero_guia.png" alt="Guía Botero"
+          onerror="this.style.display='none'; document.getElementById('guidePlaceholder').style.display='flex';">
+        <div class="guide-placeholder" id="guidePlaceholder" style="display:none;">Añade<br>botero_guia.png</div>
+
+        <div style="display:flex; gap:12px; align-items:flex-end; margin-left:auto;">
+          <button class="guide-mic-large" onclick="openChatPanel('obra', true)" aria-label="Activar voz">🎙️</button>
+          <button class="guide-mic-large" onclick="openChatPanel('obra', false)" aria-label="Abrir chat">💬</button>
+        </div>
+      </div>
+
+      <div class="obra-info-box" id="obraInfoBox">
+        Toca el micrófono o abre el chat para preguntar por la obra.
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA/PANTALLA SEPARADA: COMPARACIÓN MONALISA -->
+  <section id="screen-compare" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-obra')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="obra-heading">Comparación</p>
+    <p class="obra-subtitle">Botero vs. Da Vinci</p>
+
+    <div class="detail-screen-content">
+      <div class="compare-grid">
+        <div class="detail-card">
+          <img src="Mona-Lisa-age-Twelve-1-scaled.jpg" alt="Monalisa de Botero">
+          <div class="detail-caption">Monalisa<br>Botero, 1978</div>
+        </div>
+
+        <div class="detail-card">
+          <img src="monalisa_davinci.jpg" alt="Monalisa de Da Vinci"
+               onerror="this.outerHTML='<div class=&quot;placeholder-img&quot;>Añade la imagen:<br>monalisa_davinci.jpg</div>'">
+          <div class="detail-caption">Monalisa<br>Da Vinci</div>
+        </div>
+      </div>
+
+      <div class="detail-text" id="compareText">
+        Es un homenaje. A diferencia de Da Vinci, Botero añade volumen extremo y cambia el fondo italiano por montañas verdes que evocan a Colombia.
+      </div>
+
+      <div class="action-row">
+        <button class="mic-btn" onclick="openChatPanel('compare', true)" aria-label="Activar voz">🎙️</button>
+        <button class="chat-btn" onclick="openChatPanel('compare', false)" aria-label="Abrir chat">💬</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA/PANTALLA SEPARADA: INSTRUMENTOS -->
+  <section id="screen-instruments" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-obra')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="obra-heading">Instrumentos</p>
+    <p class="obra-subtitle">Los músicos</p>
+
+    <div class="detail-screen-content">
+      <div class="instrument-grid">
+        <div class="detail-card">
+          <img src="instrumentos_musicos.jpg" alt="Instrumentos de Los músicos"
+               onerror="this.outerHTML='<div class=&quot;placeholder-img&quot;>Añade la imagen:<br>instrumentos_musicos.jpg</div>'">
+          <div class="detail-caption">Zoom de instrumentos</div>
+        </div>
+      </div>
+
+      <div class="detail-text" id="instrumentText">
+        Vemos un ensamble de música folclórica. Si tocas o nombras un instrumento, te diré cómo suena en la tradición colombiana.
+      </div>
+
+      <div class="action-row">
+        <button class="mic-btn" onclick="openChatPanel('instruments', true)" aria-label="Activar voz">🎙️</button>
+        <button class="chat-btn" onclick="openChatPanel('instruments', false)" aria-label="Abrir chat">💬</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA/PANTALLA SEPARADA: MÚSICA EN BAILANDO EN COLOMBIA -->
+  <section id="screen-dance-music" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-obra')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="obra-heading">Música</p>
+    <p class="obra-subtitle">Bailando en Colombia</p>
+
+    <div class="detail-screen-content">
+      <div class="music-grid">
+        <div class="detail-card">
+          <img src="Musica.png" alt="Música de Bailando en Colombia"
+               onerror="this.outerHTML='<div class=&quot;placeholder-img&quot;>Añade la imagen:<br>Musica.png</div>'">
+          <div class="detail-caption">Música tropical / porro sabanero</div>
+        </div>
+      </div>
+
+      <div class="detail-text" id="danceMusicText">
+        Están bailando música tropical, posiblemente un porro sabanero. Escucha un fragmento...
+      </div>
+
+      <audio id="danceAudio" src="cancion.mp3"></audio>
+
+      <div class="action-row">
+        <button class="mic-btn" onclick="playDanceAudio()" aria-label="Escuchar fragmento">▶️</button>
+        <button class="chat-btn" onclick="openChatPanel('dance', false)" aria-label="Abrir chat">💬</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑA/PANTALLA SEPARADA: PERRO EN LA FAMILIA -->
+  <section id="screen-family-dog" class="screen grid-bg">
+    <div class="topbar">
+      <button class="back-btn" onclick="goTo('screen-obra')" aria-label="Volver">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19l-7-7 7-7" stroke="#2C1C0C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="sala-label">Sala 1</span>
+    </div>
+
+    <p class="obra-heading">Detalle</p>
+    <p class="obra-subtitle">El perro en La familia</p>
+
+    <div class="detail-screen-content">
+      <div class="dog-grid">
+        <div class="detail-card">
+          <img src="perro_la_familia.png" alt="Perro en La familia"
+               onerror="this.outerHTML='<div class=&quot;placeholder-img&quot;>Añade la imagen:<br>perro_la_familia.jpg</div>'">
+          <div class="detail-caption">Detalle del perro</div>
+        </div>
+      </div>
+
+      <div class="detail-text" id="familyDogText">
+        Incluso las mascotas en el mundo de Botero comparten el volumen. El maestro usaba esto para dar equilibrio y humor a la escena familiar.
+      </div>
+
+      <div class="action-row">
+        <button class="mic-btn" onclick="openChatPanel('dog', true)" aria-label="Activar voz">🎙️</button>
+        <button class="chat-btn" onclick="openChatPanel('dog', false)" aria-label="Abrir chat">💬</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHATBOT: SOLO APARECE CUANDO EL USUARIO LO SOLICITA -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-inner">
+      <button class="chat-close" onclick="closeChatPanel()">✕</button>
+      <p class="chat-title">Guía inteligente del museo</p>
+
+      <div class="chat-body" id="chatBody"></div>
+
+      <div class="chat-input-row">
+        <button class="small-mic-btn" id="chatMicBtn" onclick="startListening()" title="Hablar">🎙️</button>
+        <input id="chatInput" class="chat-input" type="text" placeholder="Escribe tu pregunta..." onkeydown="handleInputKey(event)" />
+        <button class="send-btn" onclick="sendChatMessage()" title="Enviar">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+  /*
+    IMÁGENES QUE YA TIENES EN LA MISMA CARPETA:
+    - Pantalla_Inicial-iPhone 16 - 2.png
+    - Bailando en colombia.jpg
+    - La familia.jpg
+    - Los musicos.jpg
+    - Mona-Lisa-age-Twelve-1-scaled.jpg
+
+    IMÁGENES OPCIONALES PARA AÑADIR LUEGO:
+    - monalisa_davinci.jpg       -> imagen de Da Vinci para la pantalla comparativa
+    - instrumentos_musicos.jpg   -> imagen/zoom de instrumentos para la pantalla de Los músicos
+    - Musica.png                  -> imagen para la pantalla de música de Bailando en Colombia
+    - cancion.mp3  -> audio que entra después de que el bot responde sobre la música
+    - perro_la_familia.jpg       -> imagen/zoom del perro de La familia
+    - botero_guia.png            -> personaje guía, preferible PNG transparente
+  */
+
+  const artworks = [
+    {
+      id: "monalisa",
+      title: "Monalisa",
+      year: "1978",
+      img: "Mona-Lisa-age-Twelve-1-scaled.jpg",
+      keywords: ["monalisa", "mona lisa", "gioconda"],
+      info: "Una reinterpretación madura y monumental del clásico de Da Vinci. Aquí, la figura es imponente, ocupa casi todo el espacio y de fondo se aprecian sutiles montañas que evocan el paisaje andino colombiano, uniendo el arte universal con el local.",
+      author: "El autor es Fernando Botero, artista colombiano reconocido por sus figuras voluminosas, su sentido crítico y su estilo visual inconfundible.",
+      compare: "Es un homenaje. A diferencia de Da Vinci, Botero añade volumen extremo y cambia el fondo italiano por montañas verdes que evocan a Colombia.",
+      details: "En esta obra, Botero no intenta copiar la Monalisa original. La transforma con su lenguaje plástico: volumen, monumentalidad, quietud y una mirada local.",
+      prompt: "¿Es igual a la de Da Vinci?"
+    },
+    {
+      id: "musicos",
+      title: "Los músicos",
+      year: "1979",
+      img: "Los musicos.jpg",
+      keywords: ["los musicos", "músicos", "musicos", "instrumentos", "guitarra", "clarinete", "mandolina"],
+      info: "Los músicos es una de las obras más rítmicas y coloridas de Botero. Muestra a un grupo de artistas locales apretados en el lienzo con sus instrumentos, como guitarra, clarinete y mandolina. Visualmente es una joya para la app porque permite hacer acercamientos interactivos a cada instrumento mientras se escucha su sonido real.",
+      author: "El autor es Fernando Botero. En esta obra, usa el volumen y la composición cerrada para crear una escena musical llena de ritmo, color y presencia.",
+      compare: "Esta obra no se compara con Da Vinci. Su fuerza está en el ambiente musical, los personajes reunidos y la posibilidad de explorar cada instrumento.",
+      details: "Vemos un ensamble de música folclórica. Si tocas o nombras un instrumento, te diré cómo suena en la tradición colombiana.",
+      prompt: "¿Qué instrumentos hay?"
+    },
+    {
+      id: "familia",
+      title: "La familia",
+      year: "1989",
+      img: "La familia.jpg",
+      keywords: ["familia", "la familia"],
+      info: "La familia presenta una escena íntima y cotidiana desde el estilo volumétrico de Botero. La obra permite observar la relación entre los personajes, sus gestos, la composición familiar y la manera en que el artista transforma una escena común en una imagen monumental.",
+      author: "El autor es Fernando Botero. En esta pieza, su lenguaje visual convierte la vida familiar en una escena amplia, sólida y expresiva.",
+      compare: "Esta obra no se relaciona directamente con Da Vinci. Su interés está en la representación de la familia y en la forma como Botero construye volumen, presencia y cercanía.",
+      details: "La escena familiar se vuelve monumental gracias al volumen de los cuerpos, la posición de los personajes y la composición cerrada.",
+      prompt: "Háblame del perro"
+    },
+    {
+      id: "bailando",
+      title: "Bailando en Colombia",
+      year: "1980",
+      img: "Bailando en colombia.jpg",
+      keywords: ["bailando", "bailando en colombia", "baile", "colombia"],
+      info: "Bailando en Colombia representa una escena festiva y social. Botero usa el volumen, el color y la composición para mostrar una mirada cultural sobre la vida colombiana, el encuentro, la música y el movimiento.",
+      author: "El autor es Fernando Botero. En esta obra, retrata una escena de baile con su estilo característico, donde el volumen no es peso, sino identidad visual.",
+      compare: "Esta obra no busca parecerse a Da Vinci. Su valor está en la escena colombiana, el baile, la música y la atmósfera social.",
+      details: "La obra muestra una escena de encuentro social. El baile, la música y los personajes crean una atmósfera muy colombiana.",
+      prompt: "¿Qué música están bailando?"
+    }
+  ];
+
+  let current = 0;
+  let currentArtwork = artworks[0];
+  let listening = false;
+  let recognition = null;
+  let activeContext = "museo";
+  let autoCloseChatAfterReply = false;
+
+  const synth = window.speechSynthesis;
+
+  function goTo(id) {
+    // Si el usuario sale de la pestaña donde suena la música, se detiene.
+    if (id !== "screen-dance-music") {
+      stopDanceAudio();
+    }
+
+    document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    // Siempre que cambia de pantalla/pestaña, el chat se oculta.
+    closeChatPanel(false);
+
+    if (id === "screen-museo") {
+      requestAnimationFrame(() => updateSlider(false));
+    }
+  }
+
+  function startExperience() {
+    goTo("screen-museo");
+
+    const text = "Bienvenido al Museo de Botero. Soy tu guía inteligente. Puedes decir el nombre de una obra como Monalisa, Los músicos, La familia o Bailando en Colombia.";
+
+    showToast("Bienvenido");
+    speak(text);
+
+    // El chat NO se abre aquí. Solo aparece si el usuario toca chat o micrófono.
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  function speak(text, onEnd) {
+    if (!text) {
+      if (typeof onEnd === "function") onEnd();
+      return;
+    }
+
+    try {
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "es-ES";
+      utterance.rate = 0.94;
+      utterance.pitch = 1;
+
+      const voices = synth.getVoices();
+      const spanishVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("es"));
+      if (spanishVoice) utterance.voice = spanishVoice;
+
+      utterance.onend = () => {
+        if (typeof onEnd === "function") onEnd();
+        finishChatTurnIfNeeded();
+      };
+
+      utterance.onerror = () => {
+        if (typeof onEnd === "function") onEnd();
+        finishChatTurnIfNeeded();
+      };
+
+      synth.speak(utterance);
+    } catch (error) {
+      console.warn("No se pudo reproducir voz:", error);
+      if (typeof onEnd === "function") onEnd();
+      finishChatTurnIfNeeded();
+    }
+  }
+
+  if (speechSynthesis && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
+
+  function normalizeText(text) {
+    return String(text || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[¿?¡!.,;:]/g, "")
+      .trim();
+  }
+
+  function renderSlider() {
+    const track = document.getElementById("sliderTrack");
+    const dots = document.getElementById("sliderDots");
+
+    track.innerHTML = "";
+    dots.innerHTML = "";
+
+    artworks.forEach((art, index) => {
+      const card = document.createElement("div");
+      card.className = "slide-card";
+      card.id = `card-${index}`;
+      card.onclick = () => handleCardClick(index);
+
+      card.innerHTML = `
+        <img src="${art.img}" alt="${art.title}">
+        <div class="card-info">
+          <p class="card-title">${art.title}</p>
+          <p class="card-year">${art.year}</p>
+        </div>
+      `;
+
+      track.appendChild(card);
+
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dots.appendChild(dot);
+    });
+
+    updateSlider(false);
+  }
+
+  const CARD_MX = 14;
+
+  function getCardWidth() {
+    const card = document.querySelector(".slide-card");
+    return card ? card.offsetWidth : 220;
+  }
+
+  function getStep() {
+    return getCardWidth() + CARD_MX * 2;
+  }
+  let currentOffset = 0;
+  let dragging = false;
+  let dragStartX = 0;
+  let dragStartOffset = 0;
+  let hasDragged = false;
+
+  function getContainerWidth() {
+    return document.getElementById("sliderOuter")?.offsetWidth || 393;
+  }
+
+  function targetOffset(index) {
+    const cw = getContainerWidth();
+    const cardW = getCardWidth();
+    return (cw / 2) - (cardW / 2) - CARD_MX - index * getStep();
+  }
+
+  function updateSlider(animated = true) {
+    const track = document.getElementById("sliderTrack");
+    if (!track) return;
+
+    currentArtwork = artworks[current];
+    currentOffset = targetOffset(current);
+
+    track.style.transition = animated ? "transform 0.38s cubic-bezier(0.4,0,0.2,1)" : "none";
+    track.style.transform = `translateX(${currentOffset}px)`;
+
+    document.querySelectorAll(".slide-card").forEach((card, index) => {
+      card.classList.toggle("active-card", index === current);
+    });
+
+    document.querySelectorAll(".dot").forEach((dot, index) => {
+      dot.classList.toggle("active", index === current);
+    });
+  }
+
+  function snapToNearest(liveOffset) {
+    let best = 0;
+    let bestDist = Infinity;
+
+    for (let i = 0; i < artworks.length; i++) {
+      const distance = Math.abs(liveOffset - targetOffset(i));
+      if (distance < bestDist) {
+        bestDist = distance;
+        best = i;
+      }
+    }
+
+    current = best;
+    updateSlider(true);
+  }
+
+  function sliderTouchStart(e) {
+    hasDragged = false;
+    dragStartX = e.touches[0].clientX;
+    dragStartOffset = currentOffset;
+
+    const track = document.getElementById("sliderTrack");
+    if (track) track.style.transition = "none";
+
+    const outer = document.getElementById("sliderOuter");
+    outer.addEventListener("touchmove", sliderTouchMove, { passive: true });
+    outer.addEventListener("touchend", sliderTouchEnd);
+  }
+
+  function sliderTouchMove(e) {
+    const dx = e.touches[0].clientX - dragStartX;
+    if (Math.abs(dx) > 6) hasDragged = true;
+
+    const liveOffset = dragStartOffset + dx;
+    document.getElementById("sliderTrack").style.transform = `translateX(${liveOffset}px)`;
+  }
+
+  function sliderTouchEnd(e) {
+    const outer = document.getElementById("sliderOuter");
+    outer.removeEventListener("touchmove", sliderTouchMove);
+    outer.removeEventListener("touchend", sliderTouchEnd);
+
+    const dx = e.changedTouches[0].clientX - dragStartX;
+    snapToNearest(dragStartOffset + dx);
+  }
+
+  function sliderDragStart(e) {
+    hasDragged = false;
+    dragging = true;
+    dragStartX = e.clientX;
+    dragStartOffset = currentOffset;
+
+    const track = document.getElementById("sliderTrack");
+    if (track) track.style.transition = "none";
+
+    window.addEventListener("mousemove", sliderDragMove);
+    window.addEventListener("mouseup", sliderDragEnd);
+
+    e.preventDefault();
+  }
+
+  function sliderDragMove(e) {
+    if (!dragging) return;
+
+    const dx = e.clientX - dragStartX;
+    if (Math.abs(dx) > 6) hasDragged = true;
+
+    const liveOffset = dragStartOffset + dx;
+    document.getElementById("sliderTrack").style.transform = `translateX(${liveOffset}px)`;
+  }
+
+  function sliderDragEnd(e) {
+    dragging = false;
+
+    window.removeEventListener("mousemove", sliderDragMove);
+    window.removeEventListener("mouseup", sliderDragEnd);
+
+    const dx = e.clientX - dragStartX;
+    snapToNearest(dragStartOffset + dx);
+  }
+
+  function handleCardClick(index) {
+    if (hasDragged) return;
+
+    if (index !== current) {
+      current = index;
+      updateSlider(true);
+    } else {
+      openArtwork(index);
+    }
+  }
+
+  function openArtwork(index) {
+    current = index;
+    currentArtwork = artworks[index];
+
+    document.getElementById("obraSubtitle").textContent = currentArtwork.title;
+    document.getElementById("obraImg").src = currentArtwork.img;
+    document.getElementById("obraImg").alt = currentArtwork.title;
+    document.getElementById("obraInfoBox").textContent =
+      `Obra identificada: ${currentArtwork.title}. Puedes preguntarme por la historia, el autor o detalles de la obra.`;
+
+    document.getElementById("obraHints").innerHTML = `
+      Prueba diciendo o escribiendo<br>
+      <strong>“Háblame de la obra”</strong><br>
+      <strong>“${currentArtwork.prompt}”</strong>
+    `;
+
+    goTo("screen-obra");
+  }
+
+  function openComparisonScreen() {
+    const index = artworks.findIndex(art => art.id === "monalisa");
+    current = index;
+    currentArtwork = artworks[index];
+    updateObraInfo(currentArtwork.compare);
+    goTo("screen-compare");
+  }
+
+  function openInstrumentScreen() {
+    const index = artworks.findIndex(art => art.id === "musicos");
+    current = index;
+    currentArtwork = artworks[index];
+    updateObraInfo(currentArtwork.details);
+    goTo("screen-instruments");
+  }
+
+  function openDanceMusicScreen() {
+    const index = artworks.findIndex(art => art.id === "bailando");
+    current = index;
+    currentArtwork = artworks[index];
+    updateObraInfo("Están bailando música tropical, posiblemente un porro sabanero. Escucha un fragmento...");
+    goTo("screen-dance-music");
+  }
+
+  function openFamilyDogScreen() {
+    const index = artworks.findIndex(art => art.id === "familia");
+    current = index;
+    currentArtwork = artworks[index];
+    updateObraInfo("Incluso las mascotas en el mundo de Botero comparten el volumen. El maestro usaba esto para dar equilibrio y humor a la escena familiar.");
+    goTo("screen-family-dog");
+  }
+
+  function stopDanceAudio() {
+    const audio = document.getElementById("danceAudio");
+    if (!audio) return;
+
+    audio.pause();
+    audio.currentTime = 0;
+  }
+
+  function playDanceAudio() {
+    const audio = document.getElementById("danceAudio");
+    if (!audio) return;
+
+    try { synth.cancel(); } catch(e) {}
+
+    audio.currentTime = 0;
+    audio.play().catch(() => {
+      showToast("Añade cancion.mp3 o toca ▶️ para reproducirlo.");
+    });
+  }
+
+  function openChatPanel(context = "museo", activateVoice = false) {
+    activeContext = context;
+    document.getElementById("chatPanel").classList.add("open");
+
+    // Cada apertura empieza limpia para que no se acumulen mensajes anteriores.
+    clearChatMessages();
+
+    addBotMessage("Hola, soy tu guía inteligente. Puedes preguntarme por Monalisa, Los músicos, La familia o Bailando en Colombia. También puedes preguntar: ¿quién es el autor?, háblame de la obra, ¿es igual a la de Da Vinci? o ¿qué instrumentos hay?");
+
+    setTimeout(() => {
+      document.getElementById("chatInput").focus();
+    }, 150);
+
+    if (activateVoice) startListening();
+  }
+
+  function closeChatPanel(stopVoice = true) {
+    document.getElementById("chatPanel").classList.remove("open");
+
+    if (stopVoice) {
+      stopListening();
+      try { synth.cancel(); } catch(e) {}
+    }
+  }
+
+  function clearChatMessages() {
+    const body = document.getElementById("chatBody");
+    if (body) body.innerHTML = "";
+  }
+
+  function finishChatTurnIfNeeded() {
+    if (!autoCloseChatAfterReply) return;
+
+    autoCloseChatAfterReply = false;
+
+    setTimeout(() => {
+      closeChatPanel(false);
+      clearChatMessages();
+    }, 300);
+  }
+
+  function addUserMessage(text) { addMessage("user", text); }
+  function addBotMessage(text) { addMessage("bot", text); }
+
+  function addMessage(role, text) {
+    const body = document.getElementById("chatBody");
+    if (!body || !text) return;
+
+    const msg = document.createElement("div");
+    msg.className = `message ${role}`;
+    msg.innerHTML = `<strong>${role === "user" ? "Tú" : "Guía"}:</strong> ${escapeHTML(text)}`;
+
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function escapeHTML(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function handleInputKey(event) {
+    if (event.key === "Enter") sendChatMessage();
+  }
+
+  function sendChatMessage() {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = "";
+    autoCloseChatAfterReply = true;
+    addUserMessage(text);
+    processCommand(text);
+  }
+
+  function findArtworkByCommand(command) {
+    const text = normalizeText(command);
+    return artworks.find(art => art.keywords.some(keyword => text.includes(normalizeText(keyword))));
+  }
+
+  function processCommand(command) {
+    const text = normalizeText(command);
+    let response = "";
+    const selectedArtwork = findArtworkByCommand(command);
+
+    if (text.includes("instrumentos") || text.includes("instrumento") || text.includes("guitarra") || text.includes("clarinete") || text.includes("mandolina") || text.includes("zoom")) {
+      response = "Vemos un ensamble de música folclórica. Si tocas o nombras un instrumento, te diré cómo suena en la tradición colombiana.";
+      addBotMessage(response);
+      speak(response);
+
+      // Al cambiar a la pantalla/pestaña de instrumentos, el chat se oculta.
+      setTimeout(() => openInstrumentScreen(), 350);
+      return;
+    }
+
+    if ((text.includes("musica") || text.includes("música") || text.includes("bailando") || text.includes("bailan") || text.includes("ritmo") || text.includes("porro") || text.includes("tropical")) && (text.includes("bailando") || currentArtwork.id === "bailando")) {
+      response = "Están bailando música tropical, posiblemente un porro sabanero. Escucha un fragmento...";
+      addBotMessage(response);
+
+      // Primero habla el bot. Cuando termina, entra la música cancion.mp3.
+      speak(response, () => {
+        openDanceMusicScreen();
+        setTimeout(() => playDanceAudio(), 350);
+      });
+      return;
+    }
+
+    if ((text.includes("perro") || text.includes("mascota") || text.includes("animal")) && (text.includes("familia") || currentArtwork.id === "familia")) {
+      response = "Incluso las mascotas en el mundo de Botero comparten el volumen. El maestro usaba esto para dar equilibrio y humor a la escena familiar.";
+      addBotMessage(response);
+      speak(response);
+      setTimeout(() => openFamilyDogScreen(), 350);
+      return;
+    }
+
+    if (text.includes("hola") || text.includes("bienvenida") || text.includes("iniciar") || text.includes("empezar")) {
+      response = "Bienvenida al Museo de Botero. Puedes decir o escribir Monalisa, Los músicos, La familia o Bailando en Colombia.";
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (selectedArtwork) {
+      const index = artworks.findIndex(art => art.id === selectedArtwork.id);
+      current = index;
+      updateSlider(true);
+
+      response = `Obra identificada: ${selectedArtwork.title}, realizada en ${selectedArtwork.year}. ${selectedArtwork.info}`;
+      addBotMessage(response);
+      speak(response);
+
+      setTimeout(() => openArtwork(index), 700);
+      return;
+    }
+
+    if (text.includes("que obra tengo") || text.includes("que obra tienes") || text.includes("frente a mi") || text.includes("frente a ti") || text.includes("obra actual")) {
+      response = `Tienes frente a ti ${currentArtwork.title}, del año ${currentArtwork.year}. ${currentArtwork.info}`;
+      updateObraInfo(response);
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (text.includes("hablame") || text.includes("historia") || text.includes("obra") || text.includes("informacion") || text.includes("información") || text.includes("cuentame") || text.includes("cuéntame")) {
+      response = currentArtwork.info;
+      updateObraInfo(response);
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (text.includes("autor") || text.includes("quien la hizo") || text.includes("quien es el artista") || text.includes("botero")) {
+      response = currentArtwork.author;
+      updateObraInfo(response);
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (text.includes("da vinci") || text.includes("davinci") || text.includes("igual") || text.includes("parece") || text.includes("comparar") || text.includes("comparacion") || text.includes("comparación")) {
+      response = "Te muestro la comparación entre la Monalisa de Botero y la referencia de Da Vinci.";
+      addBotMessage(response);
+      speak(currentArtwork.compare);
+
+      // Al cambiar a la pantalla/pestaña de comparación, el chat se oculta.
+      setTimeout(() => openComparisonScreen(), 350);
+      return;
+    }
+
+    if ((text.includes("musica") || text.includes("música") || text.includes("bailando") || text.includes("bailan") || text.includes("ritmo") || text.includes("porro") || text.includes("tropical")) && currentArtwork.id === "bailando") {
+      response = "Están bailando música tropical, posiblemente un porro sabanero. Escucha un fragmento...";
+      addBotMessage(response);
+
+      // Primero habla el bot. Cuando termina, entra la música cancion.mp3.
+      speak(response, () => {
+        openDanceMusicScreen();
+        setTimeout(() => playDanceAudio(), 350);
+      });
+      return;
+    }
+
+    if ((text.includes("perro") || text.includes("mascota") || text.includes("animal")) && currentArtwork.id === "familia") {
+      response = "Incluso las mascotas en el mundo de Botero comparten el volumen. El maestro usaba esto para dar equilibrio y humor a la escena familiar.";
+      addBotMessage(response);
+      speak(response);
+
+      // Al cambiar a la pantalla/pestaña del perro, el chat se oculta.
+      setTimeout(() => openFamilyDogScreen(), 350);
+      return;
+    }
+
+    if (text.includes("detalles") || text.includes("profundizar")) {
+      response = currentArtwork.details;
+      updateObraInfo(response);
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (text.includes("repetir") || text.includes("repitelo") || text.includes("repítelo")) {
+      response = currentArtwork.info;
+      updateObraInfo(response);
+      addBotMessage(response);
+      speak(response);
+      return;
+    }
+
+    if (text.includes("salida") || text.includes("volver") || text.includes("inicio")) {
+      response = "Claro. Te llevo al inicio del recorrido.";
+      addBotMessage(response);
+      speak(response);
+      setTimeout(() => goTo("screen-home"), 900);
+      return;
+    }
+
+    response = "No entendí tu solicitud. Intenta escribir o decir: Monalisa, Los músicos, La familia, Bailando en Colombia, háblame de la obra, quién es el autor, es igual a la de Da Vinci o qué instrumentos hay.";
+    addBotMessage(response);
+    speak(response);
+  }
+
+  function updateObraInfo(text) {
+    const box = document.getElementById("obraInfoBox");
+    if (box) box.textContent = text;
+  }
+
+  function startListening() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      const msg = "Tu navegador no soporta reconocimiento de voz. Usa Google Chrome.";
+      showToast(msg);
+      addBotMessage(msg);
+      speak(msg);
+      return;
+    }
+
+    if (location.protocol === "file:") {
+      showToast("Para usar micrófono, abre con Live Server o localhost.");
+    }
+
+    if (listening) {
+      stopListening();
+      return;
+    }
+
+    try {
+      synth.cancel();
+
+      document.getElementById("micBtnMuseo")?.classList.add("listening");
+      document.getElementById("chatMicBtn")?.classList.add("listening");
+
+      recognition = new SpeechRecognition();
+      recognition.lang = "es-CO";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        listening = true;
+        showToast("🎤 Escuchando...");
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results?.[0]?.[0]?.transcript || "";
+        document.getElementById("chatPanel").classList.add("open");
+        autoCloseChatAfterReply = true;
+        addUserMessage(transcript);
+        processCommand(transcript);
+      };
+
+      recognition.onerror = () => {
+        const msg = "No pude escuchar bien. Revisa el permiso del micrófono e intenta de nuevo.";
+        showToast("Error de micrófono");
+        addBotMessage(msg);
+        speak(msg);
+        stopListening();
+      };
+
+      recognition.onend = () => stopListening();
+      recognition.start();
+
+    } catch (error) {
+      console.error(error);
+      showToast("No se pudo activar el micrófono.");
+      stopListening();
+    }
+  }
+
+  function stopListening() {
+    listening = false;
+
+    if (recognition) {
+      try { recognition.stop(); } catch (e) {}
+      recognition = null;
+    }
+
+    document.getElementById("micBtnMuseo")?.classList.remove("listening");
+    document.getElementById("chatMicBtn")?.classList.remove("listening");
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopDanceAudio();
+  });
+
+  window.addEventListener("beforeunload", () => stopDanceAudio());
+
+  window.addEventListener("resize", () => updateSlider(false));
+
+  renderSlider();
+  requestAnimationFrame(() => updateSlider(false));
+</script>
+</body>
+</html>
